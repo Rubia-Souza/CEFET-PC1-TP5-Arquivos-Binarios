@@ -5,16 +5,20 @@
 #include <stdbool.h>
 
 #include "../utils/fileUtils.h"
+#include "../utils/stringUtils.h"
 
 #define MAX_PHRASE_SIZE 200
 
 char* getFilePath();
 char* getSearchPhrase();
 FILE* tryOpenFile();
-void toLower(char phrase[]);
 
 int main() {
     FILE* targetFile = tryOpenFile();
+    if(targetFile == NULL) {
+        return 0;
+    }
+
     char* phraseToSearch = getSearchPhrase();
     toLower(phraseToSearch);
 
@@ -28,6 +32,7 @@ int main() {
         }
     }
     
+    fclose(targetFile);
     printf("\nA frases: %s ocorreu %d vezes no arquivo", phraseToSearch, amountOcurrences);
 
     return 0;
@@ -88,12 +93,4 @@ FILE* tryOpenFile() {
     }
 
     return NULL;
-}
-
-void toLower(char phrase[]) {
-    for(int i = 0; phrase[i] != '\000'; i++){
-        phrase[i] = tolower(phrase[i]);
-    }
-
-    return;
 }
