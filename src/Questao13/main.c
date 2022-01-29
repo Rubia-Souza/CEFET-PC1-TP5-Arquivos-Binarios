@@ -30,8 +30,8 @@ enum MENU_OPTIONS {
 void printMenu();
 unsigned int getChosenOption();
 void testRange(const unsigned int start, const unsigned int end, const unsigned int testNumber);
-FILE* writeTextFile(const unsigned int* testArray, const unsigned int testNumber);
-FILE* writeBinaryFile(const unsigned int* testArray, const unsigned int testNumber);
+FILE* writeTextFile(const unsigned int* testArray, const char fileName[_MAX_FNAME]);
+FILE* writeBinaryFile(const unsigned int* testArray, const char fileName[_MAX_FNAME]);
 void printFileSize(FILE* file, const char fileName[_MAX_FNAME]);
 unsigned int* createFilledArray(const unsigned int start, const unsigned int end);
 
@@ -91,53 +91,22 @@ unsigned int getChosenOption() {
 void testRange(const unsigned int start, const unsigned int end, const unsigned int testNumber) {
     unsigned int* testArray = createFilledArray(start, end);
     
-    FILE* textFile = writeTextFile(testArray, testNumber);
-    char* fileName = (char*) malloc(_MAX_FNAME * sizeof(char));
-    sprintf(fileName, OUTPUT_TEXT_FILE_NAME, testNumber);
-    printFileSize(textFile, fileName);
+    char* textFileName = (char*) malloc(_MAX_FNAME * sizeof(char));
+    sprintf(textFileName, OUTPUT_TEXT_FILE_NAME, testNumber);
+
+    char* binaryFileName = (char*) malloc(_MAX_FNAME * sizeof(char));
+    sprintf(binaryFileName, OUTPUT_BINARY_FILE_NAME, testNumber);
+
+    FILE* textFile = writeTextFile(testArray, textFileName);
+    printFileSize(textFile, textFileName);
+    free(textFileName);
     fclose(textFile);
 
-    //FILE* binaryFile = writeBinaryFile(testArray);
-    //printFileSize(binaryFile);
+    FILE* binaryFile = writeBinaryFile(testArray, binaryFileName);
+    printFileSize(binaryFile, binaryFileName);
+    free(binaryFileName);
+    fclose(binaryFile);
 
-    return;
-}
-
-FILE* writeTextFile(const unsigned int* testArray, const unsigned int testNumber) {
-    createFolder(OUTPUT_FILE_FOLDER);
-
-    char fileFullPath[_MAX_PATH];
-    strcpy(fileFullPath, OUTPUT_FILE_FOLDER);
-
-    char* fileName = (char*) malloc(_MAX_FNAME * sizeof(char));
-    sprintf(fileName, OUTPUT_TEXT_FILE_NAME, testNumber);
-    strcat(fileFullPath, fileName);
-
-    createFile(fileFullPath);
-    FILE* textFile = fopen(fileFullPath, "w");
-
-    for(int i = 0; i < MAX_INT_ARRAY_SIZE; i++) {
-        if(i != MAX_INT_ARRAY_SIZE-1) {
-            fprintf(textFile, "%d ", testArray[i]);
-        }
-        else {
-            fprintf(textFile, "%d", testArray[i]);
-        }
-    }
-
-    free(fileName);
-    return textFile;
-}
-
-FILE* writeBinaryFile(const unsigned int* testArray, const unsigned int testNumber) {
-    createFolder(OUTPUT_FILE_FOLDER);
-}
-
-void printFileSize(FILE* file, const char fileName[_MAX_FNAME]) {
-    fseek(file, 0L, SEEK_END);
-    long int fileSize = ftell(file);
-
-    printf("\nO arquivo %s possui o tamanho: %ld.", fileName, fileSize);
     return;
 }
 
@@ -156,4 +125,51 @@ unsigned int* createFilledArray(const unsigned int start, const unsigned int end
     }
     
     return resultArray;
+}
+
+FILE* writeTextFile(const unsigned int* testArray, const char fileName[_MAX_FNAME]) {
+    createFolder(OUTPUT_FILE_FOLDER);
+
+    char fileFullPath[_MAX_PATH];
+    strcpy(fileFullPath, OUTPUT_FILE_FOLDER);
+    strcat(fileFullPath, fileName);
+
+    createFile(fileFullPath);
+    FILE* textFile = fopen(fileFullPath, "w");
+
+    for(int i = 0; i < MAX_INT_ARRAY_SIZE; i++) {
+        if(i != MAX_INT_ARRAY_SIZE-1) {
+            fprintf(textFile, "%d ", testArray[i]);
+        }
+        else {
+            fprintf(textFile, "%d", testArray[i]);
+        }
+    }
+
+    return textFile;
+}
+
+FILE* writeBinaryFile(const unsigned int* testArray, const char fileName[_MAX_FNAME]) {
+    createFolder(OUTPUT_FILE_FOLDER);
+
+    char fileFullPath[_MAX_PATH];
+    strcpy(fileFullPath, OUTPUT_FILE_FOLDER);
+    strcat(fileFullPath, fileName);
+
+    createFile(fileFullPath);
+    FILE* binaryFile = fopen(fileFullPath, "wb");
+
+    for(int i = 0; i < MAX_INT_ARRAY_SIZE; i++) {
+        fwrite(&testArray, MAX_INT_ARRAY_SIZE * sizeof(unsigned int), 1, binaryFile);
+    }
+
+    return binaryFile;
+}
+
+void printFileSize(FILE* file, const char fileName[_MAX_FNAME]) {
+    fseek(file, 0L, SEEK_END);
+    long int fileSize = ftell(file);
+
+    printf("\nO arquivo %s possui o tamanho: %ld.", fileName, fileSize);
+    return;
 }
