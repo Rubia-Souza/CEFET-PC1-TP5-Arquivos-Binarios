@@ -105,7 +105,7 @@ unsigned int* getCitiesVector(const unsigned int amountVisitedCities) {
     bool isInputValid = false;
 
     // Pede ao usuário que informe quais cidades foram visitadas
-    printf("\nInforme as cidades visitadas ou 0 para parar de informá-las");
+    printf("\nInforme as cidades visitadas");
     for(int i = 0; i < amountVisitedCities; i++) {
         printf("\n[Entrada %d de %d] Digite uma cidade visitada entre 1 e %d: ", i+1, amountVisitedCities, MAX_AMOUNT_ROWS);
 

@@ -141,7 +141,7 @@ unsigned int getChosenOption() {
 
         isInputValid = chosenOption >= TEST_ONE && chosenOption <= EXIT; // Caso o usuário informe uma opção inválida
         if(!isInputValid) { // O sistema pede para infomá-la corretamente
-            printf("\nPor favor digite um valor válid (entre %d e %d): ", TEST_ONE, EXIT);
+            printf("\nPor favor digite um valor válido (entre %d e %d): ", TEST_ONE, EXIT);
         }
     } while(!isInputValid);
 
@@ -239,7 +239,7 @@ FILE* writeBinaryFile(const unsigned int* testArray, const char fileName[_MAX_FN
 
     // Preenche o arquivo binário com os valores do array de interios
     for(int i = 0; i < MAX_INT_ARRAY_SIZE; i++) {
-        fwrite(&testArray, MAX_INT_ARRAY_SIZE * sizeof(unsigned int), 1, binaryFile);
+        fwrite(&testArray, sizeof(unsigned int), 1, binaryFile);
     }
 
     // Retorna um ponteiro para o arquivo criado
